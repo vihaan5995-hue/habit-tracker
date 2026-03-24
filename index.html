@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Habit Tracker</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#e86c1a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Habits">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f7f5f2;color:#1a1a1a;min-height:100vh;padding:0 0 3rem}
@@ -335,9 +340,7 @@ function renderProgress(){
 
   html+=`<div class="card" style="margin-top:4px">
     <div style="font-size:12px;font-weight:500;margin-bottom:6px;color:#a09a92;text-transform:uppercase;letter-spacing:0.05em">Backup</div>
-    <p style="font-size:12px;color:#b0a99f;line-height:1.6;margin-bottom:10px">Export your data as a CSV file to back it up. Import it anytime to restore your history on a new device or browser.
-    <br><span style="margin-top:4px;display:inline-block">Think of this as your habit diary's safety net. Export once a week and you'll never lose your streak history.
-    </span></p>
+    <p style="font-size:12px;color:#b0a99f;line-height:1.6;margin-bottom:10px">Export your data as a CSV file to back it up. Import it anytime to restore your history on a new device or browser.<br><span style="margin-top:4px;display:inline-block">Think of this as your habit diary's safety net. Export once a week and you'll never lose your streak history.</span></p>
     <div style="display:flex;gap:8px">
       <button onclick="exportCSV()" style="flex:1;padding:10px 0">Export CSV</button>
       <button onclick="document.getElementById('csvInput').click()" style="flex:1;padding:10px 0">Import CSV</button>
@@ -398,6 +401,10 @@ function importCSV(input){
 }
 
 load();render();
+
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('./sw.js').catch(()=>{});
+}
 </script>
 </body>
 </html>
