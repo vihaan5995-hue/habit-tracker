@@ -373,24 +373,45 @@ function importCSV(input){
     try{
       const lines=e.target.result.trim().split('\n');
       const headers=lines[0].split(',');
+
+      // Derive habit names from CSV headers (columns between 'Date' and the first ' Note' column)
+      const noteIdx=headers.findIndex(h=>h.endsWith(' Note'));
+      const habitNames=headers.slice(1, noteIdx>-1 ? noteIdx : undefined);
+
+      // Build a name→id map for existing habits so we preserve IDs if they already exist
+      const nameToId={};
+      habits.forEach(h=>{nameToId[h.name]=h.id;});
+
+      // Ensure every habit from the CSV exists in the habits array
+      habitNames.forEach((name,i)=>{
+        if(!nameToId[name]){
+          const id='h'+Date.now()+i;
+          nameToId[name]=id;
+          habits.push({id,name,color:COLORS[i%COLORS.length]});
+        }
+      });
+
+      // Now import the log rows
       let imported=0;
       for(let i=1;i<lines.length;i++){
-        const cols=lines[i].match(/(".*?"|[^,]+)(?=,|$)/g)||[];
+        const cols=lines[i].match(/(".*?"|[^,\r]+)(?=,|$)/g)||[];
         const date=cols[0]?.trim();if(!date)continue;
         if(!logs[date])logs[date]={};
-        habits.forEach(h=>{
-          const ci=headers.indexOf(h.name);const ni=headers.indexOf(h.name+' Note');
-          if(ci>-1)logs[date][h.id]=cols[ci]?.trim()==='Yes';
-          if(ni>-1)logs[date][h.id+'_note']=(cols[ni]||'').replace(/^"|"$/g,'').replace(/""/g,'"');
+        habitNames.forEach(name=>{
+          const id=nameToId[name];
+          const ci=headers.indexOf(name);
+          const ni=headers.indexOf(name+' Note');
+          if(ci>-1)logs[date][id]=cols[ci]?.trim()==='Yes';
+          if(ni>-1)logs[date][id+'_note']=(cols[ni]||'').replace(/^"|"$/g,'').replace(/""/g,'"');
         });
         imported++;
       }
       save();render();
       const msg=document.getElementById('importMsg');
-      msg.textContent=`Imported ${imported} days successfully.`;
+      msg.textContent=`Imported ${imported} days and ${habitNames.length} habits successfully.`;
       msg.style.cssText='display:block;background:#eaf3de;color:#3B6D11;margin-top:8px;font-size:13px;padding:8px 12px;border-radius:10px';
       setTimeout(()=>msg.style.display='none',4000);
-    }catch{
+    }catch(err){
       const msg=document.getElementById('importMsg');
       msg.textContent='Import failed. Make sure the file is from this app.';
       msg.style.cssText='display:block;background:#fcebeb;color:#A32D2D;margin-top:8px;font-size:13px;padding:8px 12px;border-radius:10px';
