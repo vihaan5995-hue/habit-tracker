@@ -161,7 +161,22 @@ function load(){
   else{habits=[{id:'h1',name:'Wake up at 6am',color:COLORS[0]},{id:'h2',name:'Exercise',color:COLORS[1]},{id:'h3',name:'Read for 20 min',color:COLORS[2]}];logs={};}
 }
 
+function showPastPopup(){
+  const msgs=[
+    "That day has passed — focus on today!",
+    "You can't change yesterday, but today is wide open.",
+    "The past is locked. Go crush today instead!",
+    "Yesterday is history. Today is your chance.",
+    "Eyes forward — today's habits are what count.",
+  ];
+  const el=document.getElementById('reminderMsg');
+  el.className='reminder';
+  el.textContent=msgs[Math.floor(Math.random()*msgs.length)];
+  el.style.display='block';
+  setTimeout(()=>el.style.display='none',3000);
+}
 function toggle(hid){
+  if(viewDate!==todayStr()){showPastPopup();return;}
   if(!logs[viewDate])logs[viewDate]={};
   logs[viewDate][hid]=!logs[viewDate][hid];
   save();render();
@@ -319,7 +334,10 @@ function renderProgress(){
   });
 
   html+=`<div class="card" style="margin-top:4px">
-    <div style="font-size:12px;font-weight:500;margin-bottom:10px;color:#a09a92;text-transform:uppercase;letter-spacing:0.05em">Backup</div>
+    <div style="font-size:12px;font-weight:500;margin-bottom:6px;color:#a09a92;text-transform:uppercase;letter-spacing:0.05em">Backup</div>
+    <p style="font-size:12px;color:#b0a99f;line-height:1.6;margin-bottom:10px">Export your data as a CSV file to back it up. Import it anytime to restore your history on a new device or browser.
+    <br><span style="margin-top:4px;display:inline-block">Think of this as your habit diary's safety net. Export once a week and you'll never lose your streak history.
+    </span></p>
     <div style="display:flex;gap:8px">
       <button onclick="exportCSV()" style="flex:1;padding:10px 0">Export CSV</button>
       <button onclick="document.getElementById('csvInput').click()" style="flex:1;padding:10px 0">Import CSV</button>
