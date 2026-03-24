@@ -2,7 +2,7 @@
 
 A personal habit tracking PWA built with vanilla HTML, CSS, and JavaScript. No frameworks, no backend, no dependencies. Works fully offline after the first load.
 
-**Live:** `https://your-username.github.io/habit-tracker`
+**Live:** `https://vihaan5995-hue.github.io/habit-tracker`
 
 ---
 
